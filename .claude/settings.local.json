@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:support.exotel.com)",
+      "Bash(go mod tidy:*)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:www.cloudwego.io)",
+      "Bash(go get:*)",
+      "Bash(make test-e2e:*)",
+      "Bash(make test)",
+      "Bash(make build:*)"
+    ]
+  }
+}

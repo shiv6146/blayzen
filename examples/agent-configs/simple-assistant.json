@@ -1,0 +1,80 @@
+{
+  "name": "Simple Voice Assistant",
+  "description": "A basic voice assistant for customer service",
+  "version": "1.0.0",
+  "type": "single",
+  "settings": {
+    "default_model": {
+      "provider": "openai",
+      "model": "gpt-3.5-turbo",
+      "parameters": {
+        "temperature": 0.7,
+        "max_tokens": 150
+      }
+    },
+    "tools": [
+      {
+        "name": "get_order_status",
+        "description": "Get the status of a customer's order",
+        "function": "GetOrderStatus",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "description": "The order ID to check"
+            }
+          },
+          "required": ["order_id"]
+        }
+      },
+      {
+        "name": "schedule_appointment",
+        "description": "Schedule a customer appointment",
+        "function": "ScheduleAppointment",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "description": "Appointment date (YYYY-MM-DD)"
+            },
+            "time": {
+              "type": "string",
+              "description": "Appointment time (HH:MM)"
+            },
+            "service": {
+              "type": "string",
+              "description": "Type of service"
+            }
+          },
+          "required": ["date", "time", "service"]
+        }
+      }
+    ],
+    "context": {
+      "max_tokens": 4000,
+      "reserve_percent": 0.25,
+      "summarization": true,
+      "cleanup_age": "1h"
+    },
+    "timeout": "30s",
+    "max_retries": 3,
+    "streaming": true
+  },
+  "single_agent": {
+    "name": "assistant",
+    "description": "Customer service assistant",
+    "system_prompt": "You are a helpful customer service assistant for a retail company. Be concise, polite, and professional. Always help customers with their inquiries.",
+    "instruction": "Provide brief, conversational responses suitable for voice interaction. Use tools when needed to assist customers.",
+    "model": {
+      "provider": "openai",
+      "model": "gpt-3.5-turbo",
+      "parameters": {
+        "temperature": 0.6
+      }
+    },
+    "tools": ["get_order_status", "schedule_appointment"],
+    "max_iterations": 5
+  }
+}

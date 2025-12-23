@@ -1,0 +1,239 @@
+{
+  "name": "Customer Support Workflow",
+  "description": "A multi-agent workflow for handling customer support inquiries",
+  "version": "1.0.0",
+  "type": "workflow",
+  "settings": {
+    "default_model": {
+      "provider": "openai",
+      "model": "gpt-4",
+      "parameters": {
+        "temperature": 0.7
+      }
+    },
+    "tools": [
+      {
+        "name": "lookup_customer",
+        "description": "Look up customer information",
+        "function": "LookupCustomer"
+      },
+      {
+        "name": "create_ticket",
+        "description": "Create a support ticket",
+        "function": "CreateSupportTicket"
+      },
+      {
+        "name": "escalate_issue",
+        "description": "Escalate issue to human agent",
+        "function": "EscalateToHuman"
+      },
+      {
+        "name": "process_refund",
+        "description": "Process a refund request",
+        "function": "ProcessRefund"
+      }
+    ],
+    "context": {
+      "max_tokens": 8000,
+      "reserve_percent": 0.3,
+      "summarization": true,
+      "cleanup_age": "2h"
+    },
+    "timeout": "60s",
+    "streaming": true
+  },
+  "workflow": {
+    "max_concurrent_nodes": 3,
+    "state_handler": {
+      "pre_handlers": [
+        {
+          "function": "AddTimestamp",
+          "parameters": {
+            "field": "input_time"
+          }
+        }
+      ],
+      "post_handlers": [
+        {
+          "function": "LogNodeOutput",
+          "parameters": {
+            "level": "info"
+          }
+        }
+      ]
+    },
+    "nodes": [
+      {
+        "id": "triage",
+        "name": "Triage Agent",
+        "type": "agent",
+        "agent": {
+          "name": "triage",
+          "system_prompt": "You are a triage agent. Analyze the customer's request and determine the appropriate department to handle it.",
+          "instruction": "Categorize the request into: billing, technical, general, or escalation. Be concise."
+        },
+        "input_key": "customer_request",
+        "output_key": "category"
+      },
+      {
+        "id": "billing_agent",
+        "name": "Billing Specialist",
+        "type": "agent",
+        "agent": {
+          "name": "billing",
+          "system_prompt": "You are a billing specialist. Handle all billing-related inquiries.",
+          "instruction": "Help with invoices, payments, and refunds. Use tools as needed."
+        },
+        "tools": ["lookup_customer", "process_refund"]
+      },
+      {
+        "id": "technical_agent",
+        "name": "Technical Support",
+        "type": "agent",
+        "agent": {
+          "name": "technical",
+          "system_prompt": "You are a technical support specialist. Handle technical issues and troubleshooting.",
+          "instruction": "Provide technical solutions and create tickets if needed."
+        },
+        "tools": ["lookup_customer", "create_ticket"]
+      },
+      {
+        "id": "general_agent",
+        "name": "General Support",
+        "type": "agent",
+        "agent": {
+          "name": "general",
+          "system_prompt": "You are a general support agent. Handle general inquiries.",
+          "instruction": "Answer general questions about products and services."
+        }
+      },
+      {
+        "id": "escalation_check",
+        "name": "Escalation Decision",
+        "type": "branch",
+        "condition": {
+          "type": "llm",
+          "llm_condition": {
+            "prompt": "Based on the customer's request and the agent's response, should this be escalated to a human? Consider factors like customer frustration, complex issues, or policy exceptions. Respond with only 'yes' or 'no'."
+          }
+        }
+      },
+      {
+        "id": "human_handoff",
+        "name": "Human Handoff",
+        "type": "tool",
+        "tool": {
+          "name": "escalate_issue",
+          "parameters": {
+            "reason": "complex_issue"
+          }
+        }
+      },
+      {
+        "id": "final_response",
+        "name": "Final Response Formatter",
+        "type": "lambda",
+        "lambda": {
+          "function": "FormatResponse",
+          "config": {
+            "add_greeting": true,
+            "add_reference": true
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "from": "triage",
+        "to": "billing_agent",
+        "type": "control",
+        "conditions": [
+          {
+            "type": "keyword",
+            "keywords": ["billing", "invoice", "payment", "refund", "charge"]
+          }
+        ]
+      },
+      {
+        "from": "triage",
+        "to": "technical_agent",
+        "type": "control",
+        "conditions": [
+          {
+            "type": "keyword",
+            "keywords": ["technical", "broken", "not working", "error", "bug"]
+          }
+        ]
+      },
+      {
+        "from": "triage",
+        "to": "general_agent",
+        "type": "control",
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "category == 'general'"
+          }
+        ]
+      },
+      {
+        "from": "billing_agent",
+        "to": "escalation_check",
+        "type": "both"
+      },
+      {
+        "from": "technical_agent",
+        "to": "escalation_check",
+        "type": "both"
+      },
+      {
+        "from": "general_agent",
+        "to": "escalation_check",
+        "type": "both"
+      },
+      {
+        "from": "escalation_check",
+        "to": "human_handoff",
+        "type": "control",
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "escalate == true"
+          }
+        ]
+      },
+      {
+        "from": "escalation_check",
+        "to": "final_response",
+        "type": "data",
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "escalate == false"
+          }
+        ]
+      }
+    ],
+    "branches": [
+      {
+        "id": "escalation_branch",
+        "from": "escalation_check",
+        "conditions": [
+          {
+            "type": "llm",
+            "llm_condition": {
+              "prompt": "Is the customer showing signs of frustration? Check for angry language, repeated requests, or dissatisfaction. Respond with only 'yes' or 'no'."
+            }
+          }
+        ],
+        "targets": [
+          {
+            "node": "human_handoff",
+            "weight": 1.0
+          }
+        ],
+        "default": "final_response"
+      }
+    ]
+  }
+}

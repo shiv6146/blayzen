@@ -1,0 +1,165 @@
+{
+  "name": "Knowledge Graph Agent",
+  "description": "A graph-based agent system for knowledge retrieval and reasoning",
+  "version": "1.0.0",
+  "type": "graph",
+  "settings": {
+    "default_model": {
+      "provider": "openai",
+      "model": "gpt-4",
+      "parameters": {
+        "temperature": 0.5
+      }
+    },
+    "tools": [
+      {
+        "name": "search_knowledge_base",
+        "description": "Search knowledge base for information",
+        "function": "SearchKnowledgeBase"
+      },
+      {
+        "name": "fetch_entity",
+        "description": "Fetch entity details from graph",
+        "function": "FetchEntity"
+      },
+      {
+        "name": "find_relations",
+        "description": "Find relationships between entities",
+        "function": "FindRelations"
+      },
+      {
+        "name": "calculate_similarity",
+        "description": "Calculate semantic similarity",
+        "function": "CalculateSimilarity"
+      }
+    ],
+    "context": {
+      "max_tokens": 12000,
+      "reserve_percent": 0.25,
+      "summarization": true
+    },
+    "timeout": "90s",
+    "streaming": true
+  },
+  "graph": {
+    "engine_type": "pregel",
+    "nodes": [
+      {
+        "id": "query_parser",
+        "type": "agent",
+        "agent": {
+          "name": "parser",
+          "system_prompt": "You are a query parser. Extract entities and intent from user queries.",
+          "instruction": "Identify key entities, question type, and required information."
+        }
+      },
+      {
+        "id": "entity_expander",
+        "type": "agent",
+        "agent": {
+          "name": "expander",
+          "system_prompt": "You are an entity expander. Find related entities and concepts.",
+          "instruction": "Expand initial entities with synonyms, related terms, and broader concepts."
+        },
+        "tools": ["fetch_entity"]
+      },
+      {
+        "id": "knowledge_retriever",
+        "type": "agent",
+        "agent": {
+          "name": "retriever",
+          "system_prompt": "You are a knowledge retriever. Find relevant information.",
+          "instruction": "Search and retrieve information relevant to the expanded entities."
+        },
+        "tools": ["search_knowledge_base", "find_relations"]
+      },
+      {
+        "id": "similarity_calculator",
+        "type": "lambda",
+        "lambda": {
+          "function": "CalculateSimilarityMatrix",
+          "config": {
+            "threshold": 0.7,
+            "algorithm": "cosine"
+          }
+        }
+      },
+      {
+        "id": "reasoner",
+        "type": "agent",
+        "agent": {
+          "name": "reasoner",
+          "system_prompt": "You are a reasoning engine. Synthesize information to answer queries.",
+          "instruction": "Use retrieved information and relationships to provide comprehensive answers."
+        }
+      },
+      {
+        "id": "response_formatter",
+        "type": "lambda",
+        "lambda": {
+          "function": "FormatKnowledgeResponse",
+          "config": {
+            "include_sources": true,
+            "include_confidence": true,
+            "format": "structured"
+          }
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "query_parser",
+        "to": "entity_expander",
+        "weight": 1.0,
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "entities.length > 0"
+          }
+        ]
+      },
+      {
+        "from": "entity_expander",
+        "to": "knowledge_retriever",
+        "weight": 0.8
+      },
+      {
+        "from": "query_parser",
+        "to": "knowledge_retriever",
+        "weight": 0.6,
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "query_type == 'factual'"
+          }
+        ]
+      },
+      {
+        "from": "knowledge_retriever",
+        "to": "similarity_calculator",
+        "weight": 1.0,
+        "conditions": [
+          {
+            "type": "expression",
+            "expression": "results.length > 1"
+          }
+        ]
+      },
+      {
+        "from": "similarity_calculator",
+        "to": "reasoner",
+        "weight": 0.9
+      },
+      {
+        "from": "knowledge_retriever",
+        "to": "reasoner",
+        "weight": 1.0
+      },
+      {
+        "from": "reasoner",
+        "to": "response_formatter",
+        "weight": 1.0
+      }
+    ]
+  }
+}

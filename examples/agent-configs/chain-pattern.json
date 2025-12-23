@@ -1,0 +1,116 @@
+{
+  "name": "Document Processing Chain",
+  "description": "A chain of agents for processing and analyzing documents",
+  "version": "1.0.0",
+  "type": "chain",
+  "settings": {
+    "default_model": {
+      "provider": "openai",
+      "model": "gpt-4-turbo",
+      "parameters": {
+        "temperature": 0.3
+      }
+    },
+    "tools": [
+      {
+        "name": "extract_text",
+        "description": "Extract text from document",
+        "function": "ExtractDocumentText"
+      },
+      {
+        "name": "classify_document",
+        "description": "Classify document type",
+        "function": "ClassifyDocument"
+      },
+      {
+        "name": "summarize_text",
+        "description": "Summarize long text",
+        "function": "SummarizeText"
+      }
+    ],
+    "context": {
+      "max_tokens": 16000,
+      "reserve_percent": 0.2,
+      "summarization": true
+    },
+    "timeout": "120s",
+    "streaming": false
+  },
+  "chain": {
+    "aggregate": true,
+    "aggregator": {
+      "function": "CombineChainOutputs",
+      "config": {
+        "include_intermediate": false,
+        "final_format": "structured"
+      }
+    },
+    "nodes": [
+      {
+        "agent": {
+          "name": "extractor",
+          "system_prompt": "You are a document extraction specialist. Extract and clean text from documents.",
+          "instruction": "Extract all readable text and preserve structure. Remove artifacts."
+        },
+        "tools": [
+          {
+            "name": "extract_text",
+            "parameters": {
+              "preserve_formatting": true
+            }
+          }
+        ],
+        "state": {
+          "pre_handlers": [
+            {
+              "function": "ValidateDocument",
+              "parameters": {
+                "max_size": "10MB"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "agent": {
+          "name": "classifier",
+          "system_prompt": "You are a document classification expert. Identify document types and categories.",
+          "instruction": "Classify the document into one of: invoice, contract, report, email, letter, or other."
+        },
+        "tools": [
+          {
+            "name": "classify_document",
+            "parameters": {
+              "confidence_threshold": 0.8
+            }
+          }
+        ],
+        "params": {
+          "categories": ["invoice", "contract", "report", "email", "letter", "other"]
+        }
+      },
+      {
+        "agent": {
+          "name": "analyzer",
+          "system_prompt": "You are a document analyst. Analyze content and extract key information.",
+          "instruction": "Identify key entities, dates, amounts, and action items. Provide structured analysis."
+        }
+      },
+      {
+        "agent": {
+          "name": "summarizer",
+          "system_prompt": "You are a document summarizer. Create concise summaries.",
+          "instruction": "Generate a 3-sentence summary and a detailed summary if the document is long."
+        },
+        "tools": [
+          {
+            "name": "summarize_text",
+            "parameters": {
+              "max_length": 500
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
