@@ -40,7 +40,10 @@ func (s *MockExotelServer) handleWebSocket(w http.ResponseWriter, r *http.Reques
 	connectedMsg := map[string]interface{}{
 		"event": "connected",
 	}
-	conn.WriteJSON(connectedMsg)
+	if err := conn.WriteJSON(connectedMsg); err != nil {
+		log.Printf("Error sending connected message: %v", err)
+		return
+	}
 
 	// Send start event
 	startMsg := map[string]interface{}{
@@ -49,7 +52,10 @@ func (s *MockExotelServer) handleWebSocket(w http.ResponseWriter, r *http.Reques
 		"callSid":    "mock_call_456",
 		"accountSid": "mock_account_789",
 	}
-	conn.WriteJSON(startMsg)
+	if err := conn.WriteJSON(startMsg); err != nil {
+		log.Printf("Error sending start message: %v", err)
+		return
+	}
 
 	// Simulate receiving audio and echoing it back
 	go func() {
@@ -100,8 +106,9 @@ func (s *MockExotelServer) handleWebSocket(w http.ResponseWriter, r *http.Reques
 
 func (s *MockExotelServer) Start(addr string) error {
 	s.server = &http.Server{
-		Addr:    addr,
-		Handler: http.HandlerFunc(s.handleWebSocket),
+		Addr:              addr,
+		Handler:           http.HandlerFunc(s.handleWebSocket),
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 	log.Printf("Mock Exotel server starting on %s", addr)
 	return s.server.ListenAndServe()
@@ -109,7 +116,9 @@ func (s *MockExotelServer) Start(addr string) error {
 
 func (s *MockExotelServer) Stop() {
 	if s.server != nil {
-		s.server.Close()
+		if err := s.server.Close(); err != nil {
+			log.Printf("Error closing server: %v", err)
+		}
 	}
 }
 
@@ -126,7 +135,9 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Set environment variable for echo bot
-	os.Setenv("EXOTEL_WS_URL", "ws://localhost:8080/ws")
+	if err := os.Setenv("EXOTEL_WS_URL", "ws://localhost:8080/ws"); err != nil {
+		log.Printf("Warning: failed to set environment variable: %v", err)
+	}
 
 	// Handle shutdown
 	sigCh := make(chan os.Signal, 1)

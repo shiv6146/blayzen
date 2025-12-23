@@ -134,6 +134,7 @@ func (cl *ConfigLoader) RegisterFunction(name string, fn interface{}) {
 
 // LoadFromFile loads agent configuration from a JSON file
 func (cl *ConfigLoader) LoadFromFile(path string) (*AgentConfig, error) {
+	// #nosec G304 - Config file path is provided by the user/admin, this is expected behavior
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file: %w", err)

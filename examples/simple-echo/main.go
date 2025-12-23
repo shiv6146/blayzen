@@ -114,7 +114,9 @@ func (bot *SimpleEchoBot) Run(ctx context.Context) error {
 func (bot *SimpleEchoBot) Stop() {
 	log.Println("🛑 Stopping Simple Echo Bot...")
 	bot.pipeline.Stop()
-	bot.transport.Close()
+	if err := bot.transport.Close(); err != nil {
+		log.Printf("Error closing transport: %v", err)
+	}
 }
 
 func main() {

@@ -136,8 +136,12 @@ func main() {
 	// Graceful shutdown
 	logger.Println("🛑 Shutting down...")
 	pipeline.Stop()
-	inTransport.Close()
-	outTransport.Close()
+	if err := inTransport.Close(); err != nil {
+		logger.Printf("Error closing input transport: %v", err)
+	}
+	if err := outTransport.Close(); err != nil {
+		logger.Printf("Error closing output transport: %v", err)
+	}
 	cancel()
 	logger.Println("✅ Shutdown complete")
 }

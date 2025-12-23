@@ -285,7 +285,10 @@ func (t *ExotelWebSocketTransport) Close() error {
 	// Close WebSocket connection
 	t.closedMu.RLock()
 	if t.conn != nil {
-		t.conn.Close()
+		if err := t.conn.Close(); err != nil {
+			// Log error but don't return it as we're shutting down anyway
+			fmt.Printf("Error closing WebSocket connection: %v\n", err)
+		}
 	}
 	t.closedMu.RUnlock()
 
