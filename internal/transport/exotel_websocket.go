@@ -325,9 +325,14 @@ func (t *ExotelWebSocketTransport) readPump(wg *sync.WaitGroup, config *Transpor
 	}
 
 	// Set read deadline and pong handler
-	conn.SetReadDeadline(time.Now().Add(time.Duration(config.ReadTimeout) * time.Millisecond))
+	if err := conn.SetReadDeadline(time.Now().Add(time.Duration(config.ReadTimeout) * time.Millisecond)); err != nil {
+		t.handleError(fmt.Errorf("failed to set read deadline: %w", err))
+		return
+	}
 	conn.SetPongHandler(func(string) error {
-		conn.SetReadDeadline(time.Now().Add(time.Duration(config.ReadTimeout) * time.Millisecond))
+		if err := conn.SetReadDeadline(time.Now().Add(time.Duration(config.ReadTimeout) * time.Millisecond)); err != nil {
+			return fmt.Errorf("failed to set read deadline in pong handler: %w", err)
+		}
 		return nil
 	})
 
@@ -424,7 +429,12 @@ func (t *ExotelWebSocketTransport) writePump(wg *sync.WaitGroup, config *Transpo
 
 			if conn != nil {
 				t.writeMu.Lock()
-				conn.SetWriteDeadline(time.Now().Add(time.Duration(config.WriteTimeout) * time.Millisecond))
+				if err := conn.SetWriteDeadline(time.Now().Add(time.Duration(config.WriteTimeout) * time.Millisecond)); err != nil {
+					t.writeMu.Unlock()
+					t.handleError(fmt.Errorf("failed to set write deadline: %w", err))
+					frame.Release()
+					return
+				}
 				err := conn.WriteMessage(websocket.TextMessage, data)
 				t.writeMu.Unlock()
 
@@ -445,7 +455,11 @@ func (t *ExotelWebSocketTransport) writePump(wg *sync.WaitGroup, config *Transpo
 
 			if conn != nil {
 				t.writeMu.Lock()
-				conn.SetWriteDeadline(time.Now().Add(time.Duration(config.WriteTimeout) * time.Millisecond))
+				if err := conn.SetWriteDeadline(time.Now().Add(time.Duration(config.WriteTimeout) * time.Millisecond)); err != nil {
+					t.writeMu.Unlock()
+					t.handleError(fmt.Errorf("failed to set write deadline for ping: %w", err))
+					return
+				}
 				if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 					t.writeMu.Unlock()
 					t.handleError(fmt.Errorf("websocket ping error: %w", err))
