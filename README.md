@@ -1,6 +1,6 @@
 # Blayzen - Voice Agent Framework
 
-[![Go Version](https://img.shields.io/badge/go-1.23+-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/go-1.24+-blue.svg)](https://golang.org)
 [![Go Report Card](https://goreportcard.com/badge/github.com/shiv6146/blayzen)](https://goreportcard.com/report/github.com/shiv6146/blayzen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Actions](https://github.com/shiv6146/blayzen/actions/workflows/ci.yml/badge.svg)](https://github.com/shiv6146/blayzen/actions)
@@ -83,7 +83,7 @@ func main() {
 
 ### Prerequisites
 
-- Go 1.23 or later
+- Go 1.24 or later
 - Basic understanding of Go channels (helpful but not required)
 
 ### Installation
