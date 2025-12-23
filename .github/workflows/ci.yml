@@ -73,9 +73,9 @@ jobs:
         go-version: 1.21.x
 
     - name: Run Gosec Security Scanner
-      uses: gosec-security/gosec-action@v1.1.0
-      with:
-        args: ./...
+      run: |
+        go install github.com/securego/gosec/v2/cmd/gosec@latest
+        gosec ./...
 
     - name: Run govulncheck
       run: |
