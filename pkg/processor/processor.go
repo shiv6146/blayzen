@@ -3,7 +3,7 @@ package processor
 import (
 	"context"
 
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // Processor defines the interface for all pipeline stages.

@@ -96,7 +96,7 @@ make build-examples
 
 ### 1. Choose an Issue
 
-- Check the [issue tracker](https://github.com/shiva/blayzen/issues) for open issues
+- Check the [issue tracker](https://github.com/shiv6146/blayzen/issues) for open issues
 - Look for issues labeled `good first issue` or `help wanted`
 - Comment on the issue to indicate you're working on it
 

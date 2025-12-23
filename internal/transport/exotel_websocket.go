@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // ExotelWebSocketTransport implements BidirectionalTransport for Exotel's WebSocket protocol

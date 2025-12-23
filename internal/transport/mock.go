@@ -1,7 +1,7 @@
 package transport
 
 import (
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // MockTransport implements a mock transport for testing

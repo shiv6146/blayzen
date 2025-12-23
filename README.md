@@ -1,14 +1,14 @@
 # Blayzen - Voice Agent Framework
 
 [![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org)
-[![Go Report Card](https://goreportcard.com/badge/github.com/shiva/blayzen)](https://goreportcard.com/report/github.com/shiva/blayzen)
+[![Go Report Card](https://goreportcard.com/badge/github.com/shiv6146/blayzen)](https://goreportcard.com/report/github.com/shiv6146/blayzen)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Actions](https://github.com/shiva/blayzen/actions/workflows/ci.yml/badge.svg)](https://github.com/shiva/blayzen/actions)
+[![GitHub Actions](https://github.com/shiv6146/blayzen/actions/workflows/ci.yml/badge.svg)](https://github.com/shiv6146/blayzen/actions)
 
 Build voice agents in Go with sub-200ms latencies. Turn any AI agent into a voice agent with 3 lines of code.
 
 ```bash
-go get github.com/shiva/blayzen
+go get github.com/shiv6146/blayzen
 ```
 
 ## 📊 Project Status
@@ -32,10 +32,10 @@ import (
     "log"
     "time"
 
-    "github.com/shiva/blayzen/internal/pipeline"
-    "github.com/shiva/blayzen/internal/transport"
-    "github.com/shiva/blayzen/pkg/processor"
-    "github.com/shiva/blayzen/pkg/agent"
+    "github.com/shiv6146/blayzen/internal/pipeline"
+    "github.com/shiv6146/blayzen/internal/transport"
+    "github.com/shiv6146/blayzen/pkg/processor"
+    "github.com/shiv6146/blayzen/pkg/agent"
 )
 
 func main() {
@@ -90,10 +90,10 @@ func main() {
 
 ```bash
 # Get the framework
-go get github.com/shiva/blayzen
+go get github.com/shiv6146/blayzen
 
 # Or clone the repo for examples
-git clone https://github.com/shiva/blayzen
+git clone https://github.com/shiv6146/blayzen
 cd blayzen
 ```
 
@@ -107,9 +107,9 @@ import (
     "log"
     "time"
 
-    "github.com/shiva/blayzen/internal/pipeline"
-    "github.com/shiva/blayzen/internal/transport"
-    "github.com/shiva/blayzen/pkg/processor"
+    "github.com/shiv6146/blayzen/internal/pipeline"
+    "github.com/shiv6146/blayzen/internal/transport"
+    "github.com/shiv6146/blayzen/pkg/processor"
 )
 
 func main() {
@@ -479,7 +479,7 @@ make check
 - [Performance Tuning](./docs/performance.md)
 
 ### API Reference
-- [GoDoc Documentation](https://godoc.org/github.com/shiva/blayzen)
+- [GoDoc Documentation](https://pkg.go.dev/github.com/shiv6146/blayzen)
 
 ## 🆘 Troubleshooting
 
@@ -516,8 +516,8 @@ export BLAYZEN_PING_INTERVAL=30s
 
 ### Get Help
 
-- [GitHub Issues](https://github.com/shiva/blayzen/issues) - Bug reports and feature requests
-- [GitHub Discussions](https://github.com/shiva/blayzen/discussions) - Questions and ideas
+- [GitHub Issues](https://github.com/shiv6146/blayzen/issues) - Bug reports and feature requests
+- [GitHub Discussions](https://github.com/shiv6146/blayzen/discussions) - Questions and ideas
 - [Discord Community](https://discord.gg/blayzen) - Chat with developers
 
 ## 📋 Project Information
@@ -542,4 +542,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 **Built with ❤️ by the Blayzen team**
 
-[![Star History Chart](https://api.star-history.com/svg?repos=shiva/blayzen&type=Date)](https://star-history.com/#shiva/blayzen&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=shiv6146/blayzen&type=Date)](https://star-history.com/#shiv6146/blayzen&Date)

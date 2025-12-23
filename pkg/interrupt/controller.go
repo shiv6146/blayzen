@@ -6,9 +6,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
-	"github.com/shiva/blayzen/pkg/processor"
-	"github.com/shiva/blayzen/pkg/vad"
+	"github.com/shiv6146/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/pkg/processor"
+	"github.com/shiv6146/blayzen/pkg/vad"
 )
 
 // PlaybackState represents the current playback state

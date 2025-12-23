@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // AgentConfig is the root configuration for agents

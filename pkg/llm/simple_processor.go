@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
-	"github.com/shiva/blayzen/pkg/agent"
+	"github.com/shiv6146/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/pkg/agent"
 )
 
 // SimpleProcessorFactory creates simple processors for testing

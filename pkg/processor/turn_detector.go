@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // TurnEvent represents a turn detection event

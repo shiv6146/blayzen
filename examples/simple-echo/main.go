@@ -10,10 +10,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
-	"github.com/shiva/blayzen/internal/pipeline"
-	"github.com/shiva/blayzen/internal/transport"
-	"github.com/shiva/blayzen/pkg/processor"
+	"github.com/shiv6146/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/pipeline"
+	"github.com/shiv6146/blayzen/internal/transport"
+	"github.com/shiv6146/blayzen/pkg/processor"
 )
 
 var (

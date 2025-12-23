@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/shiva/blayzen/internal/frame"
-	"github.com/shiva/blayzen/internal/transport"
-	"github.com/shiva/blayzen/pkg/processor"
+	"github.com/shiv6146/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/transport"
+	"github.com/shiv6146/blayzen/pkg/processor"
 )
 
 // Pipeline orchestrates the flow of frames through a series of processors

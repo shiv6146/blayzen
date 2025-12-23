@@ -3,7 +3,7 @@ package llm
 import (
 	"fmt"
 
-	"github.com/shiva/blayzen/pkg/agent"
+	"github.com/shiv6146/blayzen/pkg/agent"
 )
 
 // EinoProcessorFactory creates LLM processors from agent configurations

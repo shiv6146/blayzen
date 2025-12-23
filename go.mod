@@ -1,4 +1,4 @@
-module github.com/shiva/blayzen
+module github.com/shiv6146/blayzen
 
 go 1.21
 

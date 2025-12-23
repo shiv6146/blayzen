@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/shiva/blayzen/internal/frame"
+	"github.com/shiv6146/blayzen/internal/frame"
 )
 
 // VADEvent represents a voice activity detection event
